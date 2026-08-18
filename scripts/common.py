@@ -78,6 +78,32 @@ def require_env(name: str) -> str:
     return value
 
 
+def load_env_file(path: str | None = None) -> bool:
+    """Load .env into os.environ. Existing env vars (e.g. GitHub secrets) win."""
+    if path is None:
+        root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        path = os.path.join(root, ".env")
+
+    if not os.path.exists(path):
+        return False
+
+    with open(path, encoding="utf-8-sig") as handle:
+        for raw_line in handle:
+            line = raw_line.strip().strip("\u2028\u2029\ufeff")
+            if not line or line.startswith("#"):
+                continue
+            if "=" not in line:
+                continue
+            key, _, value = line.partition("=")
+            key = key.strip().strip("\u2028\u2029\ufeff")
+            value = value.strip()
+            if len(value) >= 2 and value[0] == value[-1] and value[0] in {'"', "'"}:
+                value = value[1:-1]
+            if key and key not in os.environ:
+                os.environ[key] = value
+    return True
+
+
 def http_json(
     method: str,
     url: str,

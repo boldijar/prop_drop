@@ -36,6 +36,10 @@ cp .env.example .env   # first time only — fill in credentials
 ./run
 ```
 
+Credentials work two ways:
+- **Local:** put them in `.env` (loaded automatically by the Python scripts)
+- **GitHub Actions:** set them as repository secrets (no `.env` needed)
+
 Or run steps individually:
 
 ```bash

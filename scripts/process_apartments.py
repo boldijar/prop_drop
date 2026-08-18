@@ -14,6 +14,7 @@ from typing import Any
 from common import (
     UpstashClient,
     http_json,
+    load_env_file,
     load_prodrop_config,
     require_env,
     send_telegram,
@@ -322,6 +323,7 @@ def format_error_message(config: dict[str, Any], error: Exception) -> str:
 
 def main() -> int:
     setup_logging("prodrop.process")
+    load_env_file()
     config = load_prodrop_config()
     label = config["entity"]["label"]
     batch_size = int(config["processing"]["batchSize"])

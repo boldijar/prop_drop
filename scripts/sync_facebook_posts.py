@@ -15,6 +15,8 @@ import urllib.request
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
+from common import load_env_file
+
 CONFIG_KEY = "prodrop:config"
 POSTS_KEY = "prodrop:posts"
 DEFAULT_ACTOR_ID = "apify/facebook-groups-scraper"
@@ -540,6 +542,7 @@ def update_group_sync_date(
 
 def main() -> int:
     setup_logging()
+    load_env_file()
 
     upstash = UpstashClient(
         require_env("UPSTASH_REDIS_REST_URL"),

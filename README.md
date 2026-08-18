@@ -27,18 +27,13 @@ Default start date when no config exists: **now minus 6 hours** (UTC).
 
 ## Run locally
 
-Zero dependencies — stdlib only (`urllib`, `json`, etc.).
-
-**Full pipeline** (Facebook sync → apartment extraction):
+Zero dependencies — stdlib only. Uses **exported environment variables** (same as GitHub Actions).
 
 ```bash
-cp .env.example .env   # first time only — fill in credentials
+cp env.sh.example env.sh   # fill in your values
+source env.sh
 ./run
 ```
-
-Credentials work two ways:
-- **Local:** put them in `.env` (loaded automatically by the Python scripts)
-- **GitHub Actions:** set them as repository secrets (no `.env` needed)
 
 Or run steps individually:
 
@@ -46,6 +41,8 @@ Or run steps individually:
 ./sync      # 1. scrape Facebook posts
 ./process   # 2. extract apartments with Gemini
 ```
+
+On macOS, use `python3` or `./run`, not `python` (often Python 2.7).
 
 ## GitHub Actions
 
@@ -62,13 +59,14 @@ Add these repository secrets:
 - `TELEGRAM_BOT_TOKEN`
 - `TELEGRAM_CHAT_ID`
 
-Optional repository variables:
+Optional env vars (local `env.sh` or GitHub variables):
 
 - `APIFY_ACTOR_ID`
 - `RESULTS_LIMIT`
 - `GEMINI_MODEL`
 - `LOG_LEVEL`
 - `MAX_PAGES_PER_GROUP`
+- `PRODROP_CONFIG`
 
 ## Upstash keys
 

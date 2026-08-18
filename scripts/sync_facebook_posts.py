@@ -15,7 +15,7 @@ import urllib.request
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
-from common import env_int, env_str, load_env_file
+from common import env_int, env_str
 
 CONFIG_KEY = "prodrop:config"
 POSTS_KEY = "prodrop:posts"
@@ -542,7 +542,6 @@ def update_group_sync_date(
 
 def main() -> int:
     setup_logging()
-    load_env_file()
 
     upstash = UpstashClient(
         require_env("UPSTASH_REDIS_REST_URL"),

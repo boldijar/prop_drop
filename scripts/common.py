@@ -71,18 +71,28 @@ def setup_logging(name: str = "prodrop") -> None:
     logging.getLogger(name)
 
 
+def _clean_env_value(value: str) -> str:
+    value = value.strip().strip("\u2028\u2029\ufeff")
+    if len(value) >= 2 and value[0] == value[-1] and value[0] in {'"', "'"}:
+        value = value[1:-1]
+    return value.strip()
+
+
 def require_env(name: str) -> str:
-    value = os.environ.get(name, "").strip()
+    raw = os.environ.get(name)
+    if raw is None:
+        raise RuntimeError(f"Missing required environment variable: {name}")
+    value = _clean_env_value(raw)
     if not value:
         raise RuntimeError(f"Missing required environment variable: {name}")
     return value
 
 
 def env_str(name: str, default: str = "") -> str:
-    value = os.environ.get(name)
-    if value is None:
+    raw = os.environ.get(name)
+    if raw is None:
         return default
-    value = value.strip()
+    value = _clean_env_value(raw)
     return value if value else default
 
 
@@ -91,32 +101,6 @@ def env_int(name: str, default: int) -> int:
     if not raw:
         return default
     return int(raw)
-
-
-def load_env_file(path: str | None = None) -> bool:
-    """Load .env into os.environ. Existing env vars (e.g. GitHub secrets) win."""
-    if path is None:
-        root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-        path = os.path.join(root, ".env")
-
-    if not os.path.exists(path):
-        return False
-
-    with open(path, encoding="utf-8-sig") as handle:
-        for raw_line in handle:
-            line = raw_line.strip().strip("\u2028\u2029\ufeff")
-            if not line or line.startswith("#"):
-                continue
-            if "=" not in line:
-                continue
-            key, _, value = line.partition("=")
-            key = key.strip().strip("\u2028\u2029\ufeff")
-            value = value.strip()
-            if len(value) >= 2 and value[0] == value[-1] and value[0] in {'"', "'"}:
-                value = value[1:-1]
-            if key and key not in os.environ:
-                os.environ[key] = value
-    return True
 
 
 def http_json(
@@ -180,8 +164,8 @@ class UpstashClient:
 
 
 def send_telegram(message: str) -> None:
-    token = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
-    chat_id = os.environ.get("TELEGRAM_CHAT_ID", "").strip()
+    token = env_str("TELEGRAM_BOT_TOKEN")
+    chat_id = env_str("TELEGRAM_CHAT_ID")
     if not token or not chat_id:
         logger.debug("Telegram not configured, skipping notification")
         return

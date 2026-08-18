@@ -1,0 +1,32 @@
+name: Prop Drop Pipeline
+
+on:
+  schedule:
+    # Every 6 hours (UTC)
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run pipeline (sync + process)
+        env:
+          UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_REDIS_REST_URL }}
+          UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
+          APIFY_API_TOKEN: ${{ secrets.APIFY_API_TOKEN }}
+          FACEBOOK_GROUP_URLS: ${{ secrets.FACEBOOK_GROUP_URLS }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          APIFY_ACTOR_ID: ${{ vars.APIFY_ACTOR_ID }}
+          RESULTS_LIMIT: ${{ vars.RESULTS_LIMIT }}
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
+          LOG_LEVEL: ${{ vars.LOG_LEVEL }}
+          MAX_PAGES_PER_GROUP: ${{ vars.MAX_PAGES_PER_GROUP }}
+        run: ./run

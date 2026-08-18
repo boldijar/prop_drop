@@ -15,14 +15,13 @@ import urllib.request
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
-from common import load_env_file
+from common import env_int, env_str, load_env_file
 
 CONFIG_KEY = "prodrop:config"
 POSTS_KEY = "prodrop:posts"
 DEFAULT_ACTOR_ID = "apify/facebook-groups-scraper"
 DEFAULT_RESULTS_LIMIT = 100
 APIFY_BASE_URL = "https://api.apify.com/v2"
-MAX_PAGES_PER_GROUP = int(os.environ.get("MAX_PAGES_PER_GROUP", "500"))
 DEFAULT_SYNC_LOOKBACK_HOURS = 6
 
 logger = logging.getLogger("prodrop.sync")
@@ -367,6 +366,7 @@ def scrape_group_paginated(
     lower_bound = only_posts_newer_than
     upper_bound: datetime | None = None
     page = 0
+    max_pages_per_group = env_int("MAX_PAGES_PER_GROUP", 500)
     use_date_range = actor_supports_date_range(actor_id)
 
     if use_date_range:
@@ -377,7 +377,7 @@ def scrape_group_paginated(
             "(CHRONOLOGICAL batches)"
         )
 
-    while page < MAX_PAGES_PER_GROUP:
+    while page < max_pages_per_group:
         page += 1
         window_desc = (
             f"newer than {to_iso_utc(lower_bound)}"
@@ -476,7 +476,7 @@ def scrape_group_paginated(
         logger.warning(
             "Group %s | hit MAX_PAGES_PER_GROUP=%d, stopping early",
             group_url,
-            MAX_PAGES_PER_GROUP,
+            max_pages_per_group,
         )
 
     if collected:
@@ -554,8 +554,8 @@ def main() -> int:
         for url in parse_group_urls(require_env("FACEBOOK_GROUP_URLS"))
     ]
 
-    actor_id = os.environ.get("APIFY_ACTOR_ID", DEFAULT_ACTOR_ID).strip() or DEFAULT_ACTOR_ID
-    results_limit = int(os.environ.get("RESULTS_LIMIT", str(DEFAULT_RESULTS_LIMIT)))
+    actor_id = env_str("APIFY_ACTOR_ID", DEFAULT_ACTOR_ID) or DEFAULT_ACTOR_ID
+    results_limit = env_int("RESULTS_LIMIT", DEFAULT_RESULTS_LIMIT)
 
     logger.info("=== Prop Drop Facebook sync started ===")
     logger.info("Actor: %s", actor_id)

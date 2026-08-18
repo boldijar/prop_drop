@@ -61,7 +61,7 @@ def ssl_context() -> ssl.SSLContext:
 
 
 def setup_logging(name: str = "prodrop") -> None:
-    level_name = os.environ.get("LOG_LEVEL", "INFO").upper()
+    level_name = env_str("LOG_LEVEL", "INFO").upper()
     level = getattr(logging, level_name, logging.INFO)
     logging.basicConfig(
         level=level,
@@ -76,6 +76,21 @@ def require_env(name: str) -> str:
     if not value:
         raise RuntimeError(f"Missing required environment variable: {name}")
     return value
+
+
+def env_str(name: str, default: str = "") -> str:
+    value = os.environ.get(name)
+    if value is None:
+        return default
+    value = value.strip()
+    return value if value else default
+
+
+def env_int(name: str, default: int) -> int:
+    raw = env_str(name)
+    if not raw:
+        return default
+    return int(raw)
 
 
 def load_env_file(path: str | None = None) -> bool:

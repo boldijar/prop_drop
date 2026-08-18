@@ -13,6 +13,7 @@ from typing import Any
 
 from common import (
     UpstashClient,
+    env_str,
     http_json,
     load_env_file,
     load_prodrop_config,
@@ -222,7 +223,7 @@ def process_batch(
     entities: list[dict[str, Any]],
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]], int]:
     batch_size = int(config["processing"]["batchSize"])
-    model = os.environ.get("GEMINI_MODEL", config["processing"]["geminiModel"]).strip()
+    model = env_str("GEMINI_MODEL", config["processing"]["geminiModel"]) or config["processing"]["geminiModel"]
     source_key = config["storage"]["sourceKey"]
     target_key = config["storage"]["targetKey"]
     entity_id = config["entity"]["id"]
@@ -334,7 +335,7 @@ def main() -> int:
         require_env("UPSTASH_REDIS_REST_TOKEN"),
     )
     gemini_key = require_env("GEMINI_API_KEY")
-    model = os.environ.get("GEMINI_MODEL", config["processing"]["geminiModel"]).strip()
+    model = env_str("GEMINI_MODEL", config["processing"]["geminiModel"]) or config["processing"]["geminiModel"]
 
     logger.info("=== Prop Drop extraction started (%s) ===", label)
     logger.info("Config entity: %s", config["entity"]["id"])

@@ -73,8 +73,9 @@ def setup_logging(name: str = "prodrop") -> None:
 
 def _clean_env_value(value: str) -> str:
     value = value.strip().strip("\u2028\u2029\ufeff")
-    if len(value) >= 2 and value[0] == value[-1] and value[0] in {'"', "'"}:
-        value = value[1:-1]
+    while len(value) >= 2 and value[0] == value[-1] and value[0] in {'"', "'"}:
+        value = value[1:-1].strip()
+    value = value.lstrip('"\'').rstrip('"\'')
     return value.strip()
 
 

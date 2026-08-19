@@ -1,0 +1,308 @@
+{
+  "entity": {
+    "id": "apartments",
+    "label": "Apartamente"
+  },
+  "storage": {
+    "sourceKey": "prodrop:posts",
+    "targetKey": "prodrop:apartments",
+    "syncConfigKey": "prodrop:config"
+  },
+  "processing": {
+    "batchSize": 5,
+    "geminiModel": "gemini-3.6-flash"
+  },
+  "geminiInputFields": [
+    { "name": "title", "sources": ["title", "groupTitle"] },
+    { "name": "description", "sources": ["description", "text"] },
+    { "name": "text", "sources": ["text"] }
+  ],
+  "passthroughFields": [
+    { "name": "postUrl", "sources": ["url"] },
+    { "name": "postedAt", "sources": ["time"] },
+    { "name": "postText", "sources": ["text"], "exact": true },
+    {
+      "name": "images",
+      "sources": ["images", "media", "attachments"],
+      "mergeArrays": true
+    },
+    { "name": "sourceGroupUrl", "sources": ["_groupUrl", "facebookUrl"] }
+  ],
+  "metadataFields": ["postId", "processedAt"],
+  "fields": [
+    {
+      "key": "esteAnuntReal",
+      "label": "Anunț real",
+      "type": "boolean",
+      "inPrompt": true,
+      "sortable": false,
+      "filterable": true,
+      "showInCard": false
+    },
+    {
+      "key": "pretEuro",
+      "label": "Preț",
+      "type": "integer",
+      "unit": "€",
+      "inPrompt": true,
+      "sortable": true,
+      "filterable": true,
+      "showInCard": true,
+      "highlight": true
+    },
+    {
+      "key": "postedAt",
+      "label": "Publicat la",
+      "type": "datetime",
+      "inPrompt": false,
+      "sortable": true,
+      "filterable": false,
+      "showInCard": true,
+      "detailOnly": true
+    },
+    {
+      "key": "comision",
+      "label": "Comision",
+      "type": "number",
+      "inPrompt": true,
+      "sortable": true,
+      "filterable": true,
+      "showInCard": false
+    },
+    {
+      "key": "tipVanzator",
+      "label": "Tip vânzător",
+      "type": "enum",
+      "inPrompt": true,
+      "sortable": false,
+      "filterable": true,
+      "showInCard": true,
+      "options": [
+        { "value": "proprietar", "label": "Proprietar" },
+        { "value": "agentie", "label": "Agenție" },
+        { "value": "dezvoltator", "label": "Dezvoltator" }
+      ]
+    },
+    {
+      "key": "zona",
+      "label": "Zonă",
+      "type": "string",
+      "inPrompt": true,
+      "sortable": false,
+      "filterable": true,
+      "showInCard": true
+    },
+    {
+      "key": "inApropiere",
+      "label": "În apropiere",
+      "type": "string",
+      "inPrompt": true,
+      "sortable": false,
+      "filterable": false,
+      "showInCard": false
+    },
+    {
+      "key": "metrouInApropiere",
+      "label": "Metrou",
+      "type": "string",
+      "inPrompt": true,
+      "sortable": false,
+      "filterable": false,
+      "showInCard": true
+    },
+    {
+      "key": "esteFerentariSauRahova",
+      "label": "Ferentari / Rahova",
+      "type": "boolean",
+      "inPrompt": true,
+      "sortable": false,
+      "filterable": true,
+      "showInCard": false
+    },
+    {
+      "key": "numarCamere",
+      "label": "Camere",
+      "type": "integer",
+      "inPrompt": true,
+      "sortable": true,
+      "filterable": true,
+      "showInCard": true
+    },
+    {
+      "key": "suprafata",
+      "label": "Suprafață",
+      "type": "integer",
+      "unit": "m²",
+      "inPrompt": true,
+      "sortable": true,
+      "filterable": true,
+      "showInCard": true
+    },
+    {
+      "key": "suprafataUtila",
+      "label": "Suprafață utilă",
+      "type": "integer",
+      "unit": "m²",
+      "inPrompt": true,
+      "sortable": true,
+      "filterable": true,
+      "showInCard": false
+    },
+    {
+      "key": "areBalcon",
+      "label": "Balcon",
+      "type": "boolean",
+      "inPrompt": true,
+      "sortable": false,
+      "filterable": true,
+      "showInCard": true
+    },
+    {
+      "key": "suprafataBalcon",
+      "label": "Suprafață balcon",
+      "type": "integer",
+      "unit": "m²",
+      "inPrompt": true,
+      "sortable": true,
+      "filterable": true,
+      "showInCard": false
+    },
+    {
+      "key": "etaj",
+      "label": "Etaj",
+      "type": "string",
+      "inPrompt": true,
+      "sortable": false,
+      "filterable": true,
+      "showInCard": true
+    },
+    {
+      "key": "anulConstructiei",
+      "label": "An construcție",
+      "type": "integer",
+      "inPrompt": true,
+      "sortable": true,
+      "filterable": true,
+      "showInCard": false
+    },
+    {
+      "key": "incalzire",
+      "label": "Încălzire",
+      "type": "enum",
+      "inPrompt": true,
+      "sortable": false,
+      "filterable": true,
+      "showInCard": false,
+      "options": [
+        { "value": "centrala_pe_bloc", "label": "Centrală pe bloc" },
+        { "value": "centrala_individuala", "label": "Centrală individuală" }
+      ]
+    },
+    {
+      "key": "incalzireInPardoseala",
+      "label": "Încălzire în pardoseală",
+      "type": "boolean",
+      "inPrompt": true,
+      "sortable": false,
+      "filterable": true,
+      "showInCard": false
+    },
+    {
+      "key": "trebuieRenovat",
+      "label": "Necesită renovare",
+      "type": "boolean",
+      "inPrompt": true,
+      "sortable": false,
+      "filterable": true,
+      "showInCard": false
+    },
+    {
+      "key": "inConstructie",
+      "label": "În construcție",
+      "type": "boolean",
+      "inPrompt": true,
+      "sortable": false,
+      "filterable": true,
+      "showInCard": false
+    },
+    {
+      "key": "locDeParcare",
+      "label": "Loc de parcare",
+      "type": "enum",
+      "inPrompt": true,
+      "sortable": false,
+      "filterable": true,
+      "showInCard": true,
+      "options": [
+        { "value": "da_inclus", "label": "Inclus" },
+        { "value": "da_contracost", "label": "Contra cost" },
+        { "value": "nu", "label": "Nu" }
+      ]
+    },
+    {
+      "key": "numarTelefon",
+      "label": "Telefon",
+      "type": "string",
+      "inPrompt": true,
+      "sortable": false,
+      "filterable": false,
+      "showInCard": false
+    },
+    {
+      "key": "postUrl",
+      "label": "Link postare",
+      "type": "string",
+      "inPrompt": false,
+      "sortable": false,
+      "filterable": false,
+      "showInCard": false,
+      "detailOnly": true
+    },
+    {
+      "key": "postText",
+      "label": "Text anunț",
+      "type": "text",
+      "inPrompt": false,
+      "sortable": false,
+      "filterable": false,
+      "showInCard": false,
+      "detailOnly": true
+    },
+    {
+      "key": "sourceGroupUrl",
+      "label": "Grup Facebook",
+      "type": "string",
+      "inPrompt": false,
+      "sortable": false,
+      "filterable": false,
+      "showInCard": false,
+      "detailOnly": true
+    },
+    {
+      "key": "processedAt",
+      "label": "Procesat la",
+      "type": "datetime",
+      "inPrompt": false,
+      "sortable": true,
+      "filterable": false,
+      "showInCard": false,
+      "detailOnly": true
+    }
+  ],
+  "extraction": {
+    "intro": "Ești un extractor de date imobiliare din anunțuri Facebook din București.\n\nPrimești o listă de postări (doar titlu, descriere și text). Pentru FIECARE postare, extrage informațiile imobiliare disponibile.",
+    "rules": [
+      "Toate câmpurile pot fi null dacă informația nu reiese din text.",
+      "Nu inventa date care nu sunt în text.",
+      "esteAnuntReal: true doar dacă postarea este un anunț real de vânzare apartament; false dacă nu este (întrebări, discuții, închirieri, spam etc.).",
+      "Dacă esteAnuntReal este false, celelalte câmpuri imobiliare pot fi null.",
+      "Returnează EXACT un obiect JSON per postare, în aceeași ordine ca inputul.",
+      "Răspunsul trebuie să fie un JSON array valid, fără markdown, fără text suplimentar."
+    ],
+    "footer": "POSTĂRI DE PROCESAT:"
+  },
+  "telegram": {
+    "priceField": "pretEuro",
+    "areaField": "suprafata"
+  }
+}

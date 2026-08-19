@@ -187,7 +187,7 @@ def load_prodrop_config(path: str | None = None) -> dict[str, Any]:
     config_path = path or os.environ.get("PRODROP_CONFIG", "").strip()
     if not config_path:
         root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-        config_path = os.path.join(root, "prodrop.config")
+        config_path = os.path.join(root, "prodrop.config.json")
 
     with open(config_path, encoding="utf-8") as handle:
         config = json.load(handle)

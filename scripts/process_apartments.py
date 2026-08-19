@@ -80,14 +80,39 @@ def apply_passthrough(
     return result
 
 
+def prompt_type_for_field(field: dict[str, Any]) -> str:
+    field_type = field.get("type", "string")
+    if field_type == "enum":
+        options = field.get("options", [])
+        values = " | ".join(f'"{opt["value"]}"' for opt in options)
+        return f"{values} | null"
+    type_map = {
+        "integer": "int",
+        "number": "float",
+        "boolean": "boolean",
+        "string": "string",
+        "text": "string",
+        "datetime": "string",
+    }
+    return f"{type_map.get(field_type, 'string')} | null"
+
+
 def build_extraction_prompt(config: dict[str, Any]) -> str:
     extraction = config["extraction"]
-    schema_lines = [
-        f'  "{name}": {type_hint},'
-        for name, type_hint in extraction["schema"].items()
-    ]
-    schema_block = "{\n" + "\n".join(schema_lines).rstrip(",") + "\n}"
+    prompt_fields = [field for field in config.get("fields", []) if field.get("inPrompt")]
 
+    if prompt_fields:
+        schema_lines = [
+            f'  "{field["key"]}": {prompt_type_for_field(field)},'
+            for field in prompt_fields
+        ]
+    else:
+        schema_lines = [
+            f'  "{name}": {type_hint},'
+            for name, type_hint in extraction.get("schema", {}).items()
+        ]
+
+    schema_block = "{\n" + "\n".join(schema_lines).rstrip(",") + "\n}"
     rules = "\n".join(f"- {rule}" for rule in extraction["rules"])
     return (
         f"{extraction['intro']}\n\n"

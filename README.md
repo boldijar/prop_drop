@@ -76,7 +76,7 @@ Optional env vars (local `env.sh` or GitHub variables):
 
 ## Extract apartments (Gemini)
 
-Processes posts using rules from [`prodrop.config`](prodrop.config) — schema, prompt, storage keys, and passthrough fields are all defined there for easy frontend reuse.
+Processes posts using rules from [`prodrop.config.json`](prodrop.config.json) — schema, prompt, storage keys, and passthrough fields are all defined there for easy frontend reuse.
 
 ```bash
 ./process
@@ -88,7 +88,7 @@ Processes posts using rules from [`prodrop.config`](prodrop.config) — schema, 
 | `TELEGRAM_BOT_TOKEN` | no | Telegram bot token (final notification only) |
 | `TELEGRAM_CHAT_ID` | no | Telegram chat id |
 | `GEMINI_MODEL` | no | Overrides `processing.geminiModel` in config |
-| `PRODROP_CONFIG` | no | Path to config file (default: `./prodrop.config`) |
+| `PRODROP_CONFIG` | no | Path to config file (default: `./prodrop.config.json`) |
 
 **Safety:** posts are only removed from the source key after a batch is successfully extracted and saved. If Gemini fails, those posts stay in the queue for the next run.
 
@@ -96,7 +96,21 @@ Sends only the fields listed in `geminiInputFields` to Gemini. Passthrough field
 
 **Telegram:** sends one final message on success (count, price range, m² range) or on error (error text). No per-batch spam.
 
-To change entity type, schema, or prompt — edit `prodrop.config` only.
+To change entity type, schema, or prompt — edit `prodrop.config.json` only.
+
+## Web app (Next.js)
+
+Same env vars as Python (`UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`):
+
+```bash
+source env.sh   # or export vars manually
+npm install
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000)
+
+The site loads apartments from Upstash via `/api/meta` + `/api/apartments`, caches them in `localStorage`, and only re-downloads when sync metadata changes. Schema labels, filters, and sorting are generated at runtime from `prodrop.config.json`.
 
 ## Notes
 

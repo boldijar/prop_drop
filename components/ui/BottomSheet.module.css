@@ -1,0 +1,53 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(17, 17, 17, 0.38);
+  z-index: 50;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.sheet {
+  width: min(720px, 100%);
+  max-height: 90vh;
+  overflow: auto;
+  overflow-x: hidden;
+  background: var(--surface);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  box-shadow: var(--shadow);
+  padding: 1rem 1.1rem 2rem;
+}
+
+.handle {
+  width: 42px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--teal);
+  margin: 0.25rem auto 1rem;
+}
+
+.title {
+  margin: 0 0 1rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.content {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+
+@media (min-width: 900px) {
+  .overlay {
+    align-items: center;
+    padding: 2rem;
+  }
+
+  .sheet {
+    border-radius: var(--radius-lg);
+    max-height: 85vh;
+  }
+}

@@ -1,0 +1,144 @@
+.carousel {
+  width: 100%;
+}
+
+.frame {
+  position: relative;
+  width: 100%;
+  height: 240px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.slideActive {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+  background: #111;
+  transition: opacity 0.2s ease;
+}
+
+.loader,
+.error,
+.empty {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  gap: 0.75rem;
+  color: var(--text-faint);
+  background: var(--bg-elevated);
+}
+
+.loaderIcon {
+  display: grid;
+  place-items: center;
+  opacity: 0.55;
+}
+
+.progressTrack {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: rgba(17, 17, 17, 0.08);
+}
+
+.progressBar {
+  height: 100%;
+  background: var(--teal);
+  transition: width 0.18s ease;
+}
+
+.error span,
+.empty span {
+  font-size: 0.82rem;
+  text-align: center;
+  padding: 0 1rem;
+}
+
+.nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--text);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+}
+
+.navLeft {
+  left: 0.55rem;
+}
+
+.navRight {
+  right: 0.55rem;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.55rem;
+  min-height: 1.1rem;
+}
+
+.counter {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.03em;
+}
+
+.dots {
+  display: flex;
+  gap: 0.35rem;
+  margin-left: auto;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border: none;
+  border-radius: 999px;
+  background: var(--border);
+  padding: 0;
+  cursor: pointer;
+}
+
+.dotActive {
+  width: 18px;
+  background: var(--teal);
+}
+
+@media (min-width: 720px) {
+  .frame {
+    height: 300px;
+  }
+}

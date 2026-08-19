@@ -56,6 +56,7 @@ export type CachePayload = {
 
 export const CACHE_STORAGE_KEY = "prodrop:web-cache";
 export const FAVORITES_STORAGE_KEY = "prodrop:favorites";
+export const HIDDEN_STORAGE_KEY = "prodrop:hidden";
 export const FILTERS_STORAGE_KEY = "prodrop:filters";
 
 export function getSortableFields(): FieldDef[] {

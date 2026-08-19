@@ -1,5 +1,10 @@
 import type { Apartment, FieldDef } from "./schema";
-import { FAVORITES_STORAGE_KEY, FILTERS_STORAGE_KEY, getField } from "./schema";
+import {
+  FAVORITES_STORAGE_KEY,
+  FILTERS_STORAGE_KEY,
+  HIDDEN_STORAGE_KEY,
+  getField,
+} from "./schema";
 
 export const DEFAULT_SORT: NonNullable<SortState> = {
   field: "postedAt",
@@ -28,6 +33,37 @@ export function toggleFavorite(postId: string): string[] {
     ? current.filter((id) => id !== postId)
     : [...current, postId];
   writeFavorites(next);
+  return next;
+}
+
+export function readHidden(): string[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = localStorage.getItem(HIDDEN_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed.map(String) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function writeHidden(ids: string[]): void {
+  localStorage.setItem(HIDDEN_STORAGE_KEY, JSON.stringify(ids));
+}
+
+export function hideApartment(postId: string): string[] {
+  const current = readHidden();
+  if (current.includes(postId)) return current;
+  const next = [...current, postId];
+  writeHidden(next);
+  return next;
+}
+
+export function unhideApartment(postId: string): string[] {
+  const current = readHidden();
+  const next = current.filter((id) => id !== postId);
+  writeHidden(next);
   return next;
 }
 

@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Icon } from "@/components/ui/Icon";
 import styles from "./ImageCarousel.module.css";
 
 type ImageCarouselProps = {
   images: string[];
 };
+
+const LOAD_TIMEOUT_MS = 12_000;
 
 function CarouselSlide({
   src,
@@ -24,12 +26,27 @@ function CarouselSlide({
     setLoaded(false);
     setErrored(false);
 
+    let settled = false;
+    const finish = (failed: boolean) => {
+      if (settled) return;
+      settled = true;
+      if (failed) {
+        setErrored(true);
+        onError();
+      }
+    };
+
     const timer = window.setInterval(() => {
       setProgress((current) => Math.min(current + 6, 92));
     }, 100);
 
-    return () => window.clearInterval(timer);
-  }, [src]);
+    const timeout = window.setTimeout(() => finish(true), LOAD_TIMEOUT_MS);
+
+    return () => {
+      window.clearInterval(timer);
+      window.clearTimeout(timeout);
+    };
+  }, [src, onError]);
 
   if (errored) {
     return (
@@ -90,22 +107,14 @@ export function ImageCarousel({ images }: ImageCarouselProps) {
     }
   }, [index, validImages.length]);
 
-  if (!images.length) {
-    return (
-      <div className={styles.empty}>
-        <Icon name="image" size={32} />
-        <span>Fără imagini</span>
-      </div>
+  const handleImageError = useCallback((failedUrl: string) => {
+    setValidImages((currentImages) =>
+      currentImages.filter((url) => url !== failedUrl),
     );
-  }
+  }, []);
 
-  if (!validImages.length) {
-    return (
-      <div className={styles.empty}>
-        <Icon name="image" size={32} />
-        <span>Imaginile nu pot fi afișate</span>
-      </div>
-    );
+  if (!images.length || !validImages.length) {
+    return null;
   }
 
   const safeIndex = Math.min(index, validImages.length - 1);
@@ -121,11 +130,7 @@ export function ImageCarousel({ images }: ImageCarouselProps) {
         <CarouselSlide
           key={current}
           src={current}
-          onError={() => {
-            setValidImages((currentImages) =>
-              currentImages.filter((url) => url !== current),
-            );
-          }}
+          onError={() => handleImageError(current)}
         />
 
         {validImages.length > 1 ? (

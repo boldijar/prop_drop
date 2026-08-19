@@ -12,13 +12,16 @@ import {
   DEFAULT_FILTERS,
   DEFAULT_SORT,
   getApartmentId,
+  hideApartment,
   matchesFilters,
   matchesSearch,
   readFavorites,
   readFilters,
+  readHidden,
   readSort,
   sortApartments,
   toggleFavorite,
+  unhideApartment,
   writeFilters,
   writeSort,
   type FilterState,
@@ -34,7 +37,7 @@ import {
 } from "@/lib/schema";
 import styles from "./page.module.css";
 
-type Tab = "all" | "favorites";
+type Tab = "all" | "favorites" | "hidden";
 
 function SortChips({
   sort,
@@ -81,6 +84,7 @@ export default function HomeClient() {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [selected, setSelected] = useState<Apartment | null>(null);
   const [favorites, setFavorites] = useState<string[]>([]);
+  const [hidden, setHidden] = useState<string[]>([]);
   const [tab, setTab] = useState<Tab>("all");
 
   const filterableFields = useMemo(() => getFilterableFields(), []);
@@ -89,6 +93,7 @@ export default function HomeClient() {
 
   useEffect(() => {
     setFavorites(readFavorites());
+    setHidden(readHidden());
     setFilters(readFilters());
     setSort(readSort());
     setPrefsReady(true);
@@ -114,19 +119,28 @@ export default function HomeClient() {
 
   const visibleApartments = useMemo(() => {
     let list = apartments;
+
     if (tab === "favorites") {
       list = list.filter((item) => favorites.includes(getApartmentId(item)));
+    } else if (tab === "hidden") {
+      list = list.filter((item) => hidden.includes(getApartmentId(item)));
+    } else {
+      list = list.filter((item) => !hidden.includes(getApartmentId(item)));
     }
+
     list = list.filter((item) => matchesSearch(item, search));
+
     if (showFilters) {
       list = list.filter((item) =>
         matchesFilters(item, filters, filterableFields),
       );
     }
+
     return sortApartments(list, sort);
   }, [
     apartments,
     favorites,
+    hidden,
     tab,
     search,
     filters,
@@ -136,6 +150,8 @@ export default function HomeClient() {
   ]);
 
   const showFavoritesTab = favorites.length > 0;
+  const showHiddenTab = hidden.length > 0;
+  const selectedId = selected ? getApartmentId(selected) : null;
 
   function handleSortField(fieldKey: string) {
     setSort((current) => {
@@ -147,6 +163,15 @@ export default function HomeClient() {
         active.direction === "desc" ? "asc" : "desc";
       return { field: fieldKey, direction: nextDirection };
     });
+  }
+
+  function handleHide(id: string) {
+    setHidden(hideApartment(id));
+    if (selectedId === id) setSelected(null);
+  }
+
+  function handleUnhide(id: string) {
+    setHidden(unhideApartment(id));
   }
 
   return (
@@ -171,6 +196,13 @@ export default function HomeClient() {
               label="Favorite"
               active={tab === "favorites"}
               onClick={() => setTab("favorites")}
+            />
+          ) : null}
+          {showHiddenTab ? (
+            <Chip
+              label="Ascunse"
+              active={tab === "hidden"}
+              onClick={() => setTab("hidden")}
             />
           ) : null}
         </div>
@@ -231,7 +263,9 @@ export default function HomeClient() {
             <div className={styles.empty}>
               {tab === "favorites"
                 ? "Nicio proprietate salvată."
-                : "Nicio listare găsită."}
+                : tab === "hidden"
+                  ? "Nicio listare ascunsă."
+                  : "Nicio listare găsită."}
             </div>
           ) : null}
           <div className={styles.grid}>
@@ -242,8 +276,15 @@ export default function HomeClient() {
                   key={id}
                   apartment={apartment}
                   favorite={favorites.includes(id)}
+                  hiddenTab={tab === "hidden"}
                   onOpen={() => setSelected(apartment)}
                   onToggleFavorite={() => setFavorites(toggleFavorite(id))}
+                  onHide={
+                    tab === "hidden" ? undefined : () => handleHide(id)
+                  }
+                  onUnhide={
+                    tab === "hidden" ? () => handleUnhide(id) : undefined
+                  }
                 />
               );
             })}
@@ -275,7 +316,22 @@ export default function HomeClient() {
         onClose={() => setSelected(null)}
         title="Detalii apartament"
       >
-        {selected ? <ApartmentDetail apartment={selected} /> : null}
+        {selected && selectedId ? (
+          <ApartmentDetail
+            apartment={selected}
+            hidden={tab === "hidden" || hidden.includes(selectedId)}
+            onHide={
+              tab === "hidden" || hidden.includes(selectedId)
+                ? undefined
+                : () => handleHide(selectedId)
+            }
+            onUnhide={
+              tab === "hidden" || hidden.includes(selectedId)
+                ? () => handleUnhide(selectedId)
+                : undefined
+            }
+          />
+        ) : null}
       </BottomSheet>
 
       {syncConfig.groups ? (

@@ -18,6 +18,8 @@ export type IconName =
   | "chevron-left"
   | "chevron-right"
   | "link"
+  | "eye-off"
+  | "eye"
   | "balcony"
   | "heat"
   | "hammer"

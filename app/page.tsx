@@ -243,7 +243,9 @@ export default function HomeClient() {
         </div>
       </div>
 
-      <div className={styles.layout}>
+      <div
+        className={`${styles.layout} ${showFilters ? "" : styles.layoutFull}`}
+      >
         {showFilters ? (
           <aside className={styles.sidebar}>
             <div className={styles.sidebarInner}>

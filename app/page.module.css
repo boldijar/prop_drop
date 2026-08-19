@@ -135,6 +135,20 @@
   min-width: 0;
 }
 
+.layoutFull {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+.layoutFull .main {
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.layoutFull .grid {
+  grid-template-columns: 1fr !important;
+}
+
 .sidebar {
   display: none;
 }

@@ -2,8 +2,8 @@ name: Prop Drop Pipeline
 
 on:
   schedule:
-    # Every 6 hours (UTC)
-    - cron: "0 */6 * * *"
+    # 09:00, 14:00, 19:00, 24:00 Romania (UTC+3) → 06, 11, 16, 21 UTC
+    - cron: "0 6,11,16,21 * * *"
   workflow_dispatch:
 
 jobs:

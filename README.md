@@ -47,7 +47,7 @@ On macOS, use `python3` or `./run`, not `python` (often Python 2.7).
 ## GitHub Actions
 
 Workflow: `.github/workflows/prodrop-pipeline.yml`  
-Schedule: every 6 hours (UTC). Runs `./run` (sync + process). You can also trigger it manually from the Actions tab.
+Schedule: **09:00, 14:00, 19:00, 24:00** (ora României, UTC+3). Runs `./run` (sync + process). You can also trigger it manually from the Actions tab.
 
 Add these repository secrets:
 

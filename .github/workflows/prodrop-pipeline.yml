@@ -1,21 +1,32 @@
+# Name of the GitHub Actions workflow as it appears in the Actions tab
 name: Prop Drop Pipeline
 
-on:
-  schedule:
-    # 09:00, 14:00, 19:00, 24:00 Romania (UTC+3) → 06, 11, 16, 21 UTC
-    - cron: "0 6,11,16,21 * * *"
-  workflow_dispatch:
+# Disabled workflow triggers (commented out to cancel execution)
+# on:
+#   schedule:
+#     # Runs automatically four times a day at 09:00, 14:00, 19:00, and 24:00 Romania time (UTC+3)
+#     # Cron format: (Minute Hour Day-of-Month Month Day-of-Week) in UTC time
+#     - cron: "0 6,11,16,21 * * *"
+#   # Allows manual triggering of the workflow from the GitHub Actions UI or API
+#   workflow_dispatch:
 
 jobs:
   pipeline:
+    # Specifies the virtual machine operating system to run the job on
     runs-on: ubuntu-latest
+    
+    # Prevents hung jobs from running indefinitely and consuming free minutes (max 2 hours)
     timeout-minutes: 120
 
+    # Sequential list of tasks to execute as part of the pipeline job
     steps:
+      # Step 1: Checks out the repository's code so the runner can access it
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Step 2: Executes the pipeline script with required environment secrets
       - name: Run pipeline (sync + process)
+        # Maps repository secrets to environment variables accessible by the shell script
         env:
           UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_REDIS_REST_URL }}
           UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
@@ -24,4 +35,5 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        # Runs the executable script located at the repository root
         run: ./run
